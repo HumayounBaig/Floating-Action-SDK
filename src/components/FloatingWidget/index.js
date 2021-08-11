@@ -1,1 +1,1 @@
-export { FloatingWidget } from './FloatingWidget';
+export { FloatingWidgetConnected as FloatingWidget } from './container';
