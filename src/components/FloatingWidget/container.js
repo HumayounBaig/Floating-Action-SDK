@@ -66,7 +66,7 @@ const FloatingWidgetContainer = () => {
   }, [audioRecording]);
 
   return (
-    <View>
+    <>
       <FloatingWidget 
         actions = {floatingActions}
         handleItemSelection = {handleItemSelection}
@@ -82,7 +82,7 @@ const FloatingWidgetContainer = () => {
       > 
         <AudioRecorder />
       </Modal>
-    </View>
+    </>
   )
 }
 
