@@ -10,17 +10,10 @@ import { AudioRecorder } from "./AudioRecorder";
 import { TextArea } from "./TextArea";
 
 const FloatingWidgetContainer = () => {
-  const { showActionSheetWithOptions } = useActionSheet();
-  const [cameraResponse, setCameraResponse] = useState(null);
+  const { showActionSheetWithOptions } = useActionSheet(); 
   const [audioRecording, setAudioRecording] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [textModalVisible, setTextModalVisible] = useState(false);
-
-  useEffect(() => {
-    if(cameraResponse) {
-      postImageFeedback()
-    }
-  }, [cameraResponse]);
 
   const _handleAudioRecord = () => {
     setModalVisible(!modalVisible)
@@ -47,10 +40,14 @@ const FloatingWidgetContainer = () => {
     }
   }
 
-  const postImageFeedback = async() => {
+  const postImageFeedback = async(cameraResponse) => {
     try {
       const data = new FormData(); 
-      data.append("feedback_file", cameraResponse); 
+      data.append("feedback_file", {
+        uri: `file://${cameraResponse.uri}`,
+        name: cameraResponse.fileName,
+        type: cameraResponse.type,
+      });
       data.append("user", "admin"); 
       data.append("domain", "salik");
       let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
@@ -73,7 +70,6 @@ const FloatingWidgetContainer = () => {
       //     }
       //   }
       // })
-      .catch((error) => { console.log("Error:", error); });
     } catch (error) {
       console.log(error)
     }
@@ -93,16 +89,13 @@ const FloatingWidgetContainer = () => {
       buttonIndex => {
         if (buttonIndex === 0) {
           try {
-            launchCamera({}, (res) => setCameraResponse(res.assets[0]))
-            console.log('cameraRes', cameraResponse)
+            launchCamera({}, (res) => postImageFeedback(res.assets[0]))
           } catch (error) {
             console.log(error)            
           }
         } else if (buttonIndex === 1){
           try {
-            launchImageLibrary({}, (res) => setCameraResponse(res.assets[0]))
-            console.log('cameraRes', cameraResponse)
-
+            launchImageLibrary({}, (res) => postImageFeedback(res.assets[0]))
           } catch (error) {
             console.log(error)            
           }
