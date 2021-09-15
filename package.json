@@ -16,6 +16,7 @@
     "react-native-audio-recorder-player": "^3.1.1",
     "react-native-floating-action": "^1.21.0",
     "react-native-image-picker": "^4.0.6",
+    "react-native-textarea": "^1.0.4",
     "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
