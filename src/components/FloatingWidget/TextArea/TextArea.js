@@ -7,45 +7,47 @@ export const TextArea = (params) => {
   const [feedbackText, setFeedbackText] = useState('');
 
   const handleSubmit = async() => {
-    console.log('feedbackText', feedbackText)
-    let path = RNFS.DocumentDirectoryPath + '/test.txt';
-    console.log(RNFS.DocumentDirectoryPath + '/test.txt')
-
-    RNFS.writeFile(path, feedbackText, 'utf8')
-    .then(async(success) => {
-      console.log('FILE WRITTEN!');
-      console.log('success', success)
-      RNFS.readFile(path, 'utf8')
-      .then(file => console.log(file))
-
-      // let result = await fetch(path);
-      // console.log(await result.blob());
-      // const fileData = await result.blob()
-      const data = new FormData(); 
-      data.append("feedback_file", {
-        uri: `file://${path}`,
-        name: "image",
-        type: "image/png",
-      });
-      data.append("user", "admin"); 
-      data.append("domain", "text_athar");
+    if(feedbackText.length < 6) {
+      alert('Feedback should be at least more than 5 characters!')
+    } else {
+      console.log('feedbackText', feedbackText)
+      let path = RNFS.DocumentDirectoryPath + '/test.txt';
+      console.log(RNFS.DocumentDirectoryPath + '/test.txt')
   
-      console.log(data)
-
-      let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
-      { method: "POST", headers:
-        { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
-        body: data,
+      RNFS.writeFile(path, feedbackText, 'utf8')
+      .then(async(success) => {
+        console.log('FILE WRITTEN!');
+        console.log('success', success)
+        RNFS.readFile(path, 'utf8')
+        .then(file => console.log(file))
+  
+        // let result = await fetch(path);
+        // console.log(await result.blob());
+        // const fileData = await result.blob()
+        const data = new FormData(); 
+        data.append("feedback_file", {
+          uri: `file://${path}`,
+          name: "image",
+          type: "image/png",
+        });
+        data.append("user", "admin"); 
+        data.append("domain", "text_athar");
+    
+        console.log(data)
+  
+        let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
+        { method: "POST", headers:
+          { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
+          body: data,
+        })
+        console.log('res', await res.json())
+  
+  
       })
-      console.log('res', await res.json())
-
-
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-
-
+      .catch((err) => {
+        console.log(err.message);
+      });
+    }
   }
   return (
     <View style={styles.container}>
@@ -54,7 +56,7 @@ export const TextArea = (params) => {
         style={styles.textarea}
         onChangeText={setFeedbackText}
         defaultValue={feedbackText}
-        maxLength={120}
+        maxLength={500}
         placeholder={'Enter your feedback'}
         placeholderTextColor={'#333'}
         underlineColorAndroid={'transparent'}
@@ -71,7 +73,8 @@ export const TextArea = (params) => {
         ]}>
         {({ pressed }) => (
           <Text style={styles.buttonText}>
-            {pressed ? 'Pressed!' : 'Press Me'}
+            {/* {pressed ? 'Pressed!' : } */}
+            Submit
           </Text>
         )}
       </Pressable>
@@ -107,6 +110,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 20,
+    paddingHorizontal: 20
 
   }
 
