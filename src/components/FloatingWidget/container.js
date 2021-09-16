@@ -45,30 +45,35 @@ const FloatingWidgetContainer = () => {
 
  const _handlevideo =()=> { 
     try {
-      launchCamera({videoQuality:'high', mediaType:'video', durationLimit:60}, (res) => {postVideoFeedback(res.assets[0]),console.log(res,"res")})
+      launchCamera({
+        videoQuality:'high', 
+        mediaType:'video', 
+        durationLimit:60
+      }, (res) => {
+        postVideoFeedback(res.assets[0])
+      })
     } catch (error) {
       console.log(error)            
     }
   }
 
 
-  const postVideoFeedback = async(data) => {
-    console.log(data,"responbsees")
+  const postVideoFeedback = async(vidData) => {
+    data = new FormData(); 
+    data.append("feedback_file", {
+      uri: Platform.OS === 'ios' ? vidData.uri.replace('file://', '') : vidData.uri,
+      name: vidData.fileName,
+      type: vidData.fileSize,
+    });
+    data.append("user", "admin"); 
+    data.append("domain", "video_athar");
     try {
-      const data = new FormData(); 
-      data.append("feedback_file", {
-        uri: Platform.OS === 'ios' ? data.uri.replace('file://', '') : data.uri,
-        name: data.fileName,
-        type: data.fileSize,
-      });
-      data.append("user", "admin"); 
-      data.append("domain", "video_athar");
       let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
-      { method: "POST", headers:
+      { 
+        method: "POST", headers:
         { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
         body: data,
       })
-      console.log('res', await res.json())
       // .then((res) => res.json())
       // .then((result) => {
       //   console.log('result', result)
@@ -84,7 +89,7 @@ const FloatingWidgetContainer = () => {
       //   }
       // })
     } catch (error) {
-      console.log(error)
+      console.log('err', error)
     }
   }
 
