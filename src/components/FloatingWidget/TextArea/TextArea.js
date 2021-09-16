@@ -28,7 +28,7 @@ export const TextArea = (params) => {
         type: "image/png",
       });
       data.append("user", "admin"); 
-      data.append("domain", "salik");
+      data.append("domain", "text_athar");
   
       console.log(data)
 
