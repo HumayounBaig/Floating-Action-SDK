@@ -4,7 +4,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { connectActionSheet } from '@expo/react-native-action-sheet'
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { floatingActions } from "./floatingActions";
-import { Text, View, Modal, Pressable } from "react-native";
+import { Text, View, Modal, Pressable,Alert } from "react-native";
 import { Player, Recorder, MediaStates } from '@react-native-community/audio-toolkit';
 import { AudioRecorder } from "./AudioRecorder";
 import { TextArea } from "./TextArea";
@@ -34,28 +34,46 @@ const FloatingWidgetContainer = () => {
       case 'bt_text':
         _handleText()
         break;
-    
+        case 'bt_video':
+        _handlevideo()
+          break;
       default:
         break;
     }
   }
 
-  const postImageFeedback = async(cameraResponse) => {
+
+ const _handlevideo =()=> { 
     try {
-      const data = new FormData(); 
-      data.append("feedback_file", {
-        uri: `file://${cameraResponse.uri}`,
-        name: cameraResponse.fileName,
-        type: cameraResponse.type,
-      });
-      data.append("user", "admin"); 
-      data.append("domain", "salik");
+      launchCamera({
+        videoQuality:'high', 
+        mediaType:'video', 
+        durationLimit:60
+      }, (res) => {
+        postVideoFeedback(res.assets[0])
+      })
+    } catch (error) {
+      console.log(error)            
+    }
+  }
+
+
+  const postVideoFeedback = async(vidData) => {
+    data = new FormData(); 
+    data.append("feedback_file", {
+      uri: Platform.OS === 'ios' ? vidData.uri.replace('file://', '') : vidData.uri,
+      name: vidData.fileName,
+      type: vidData.fileSize,
+    });
+    data.append("user", "admin"); 
+    data.append("domain", "video_athar");
+    try {
       let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
-      { method: "POST", headers:
+      { 
+        method: "POST", headers:
         { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
         body: data,
       })
-      console.log('res', await res.json())
       // .then((res) => res.json())
       // .then((result) => {
       //   console.log('result', result)
@@ -70,6 +88,28 @@ const FloatingWidgetContainer = () => {
       //     }
       //   }
       // })
+    } catch (error) {
+      console.log('err', error)
+    }
+  }
+
+  const postImageFeedback = async(cameraResponse) => {
+    console.log(cameraResponse,"responbsees")
+    try {
+      const data = new FormData(); 
+      data.append("feedback_file", {
+        uri: Platform.OS === 'ios' ? data.uri.replace('file://', '') : data.uri,
+        name: cameraResponse.fileName,
+        type: cameraResponse.type,
+      });
+      data.append("user", "admin"); 
+      data.append("domain", "image_athar");
+      let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
+      { method: "POST", headers:
+        { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
+        body: data,
+      })
+      console.log('res', await res.json())
     } catch (error) {
       console.log(error)
     }

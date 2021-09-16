@@ -7,6 +7,7 @@ import AudioRecorderPlayer, {
   PlayBackType,
   RecordBackType,
 } from 'react-native-audio-recorder-player';
+import {request, PERMISSIONS, check, RESULTS} from 'react-native-permissions';
 import {
   Dimensions,
   PermissionsAndroid,
@@ -16,9 +17,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Linking
 } from 'react-native';
 import React, {Component} from 'react';
-
 import Button from '../../uis/Button';
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -256,6 +257,7 @@ export class AudioRecorder extends Component {
     }
   };
 
+ 
   onStartRecord = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -276,8 +278,10 @@ export class AudioRecorder extends Component {
             PermissionsAndroid.RESULTS.GRANTED
         ) {
           console.log('permissions granted');
+          this.onStartRecording();
         } else {
           console.log('All required permissions not granted');
+          Linking.openSettings()
           return;
         }
       } catch (err) {
@@ -286,6 +290,48 @@ export class AudioRecorder extends Component {
       }
     }
 
+    if (Platform.OS == 'ios') {
+      console.log('if ch;aaa');
+      check(PERMISSIONS.IOS.MICROPHONE).then((result) => {
+        switch (result) {
+          case RESULTS.UNAVAILABLE:
+            console.log(
+              'This feature is not available (on this device / in this context)',
+            );
+            // Linking.openSettings()
+            break;
+          case RESULTS.DENIED:
+            console.log(
+              'The permission has not been requested / is denied but requestable',
+            );
+            request(PERMISSIONS.IOS.MICROPHONE);
+            // Linking.openSettings()
+            break;
+          case RESULTS.LIMITED:
+            console.log('The permission is limited: some actions are possible');
+            break;
+          case RESULTS.GRANTED:
+            console.log('The permission is granted');
+            this.onStartRecording();
+            break;
+          case RESULTS.BLOCKED:
+            console.log('The permission is denied and not requestable anymore');
+            Linking.openSettings();
+            break;
+        }
+      });
+    }
+
+    
+  };
+
+  onStartRecording = async() => {
+    const dirs = RNFetchBlob.fs.dirs;
+
+    const path = Platform.select({
+      ios: 'hello.m4a',
+      android: `${dirs.CacheDir}/hello.m4a`,
+    });
     const audioSet = {
       AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
       AudioSourceAndroid: AudioSourceAndroidType.MIC,
@@ -303,7 +349,7 @@ export class AudioRecorder extends Component {
 
     //? Default path
     const uri = await this.audioRecorderPlayer.startRecorder(
-      undefined,
+      path,
       audioSet,
     );
 
@@ -317,8 +363,8 @@ export class AudioRecorder extends Component {
       });
     });
     console.log(`uri: ${uri}`);
-  };
 
+  } 
   onPauseRecord = async () => {
     try {
       await this.audioRecorderPlayer.pauseRecorder();
@@ -337,9 +383,28 @@ export class AudioRecorder extends Component {
     this.setState({
       recordSecs: 0,
     });
-    console.log(result);
+    console.log(result,"resulttt");
+    
+    const data = new FormData(); 
+      data.append("feedback_file", {
+        uri: `${result}`,
+        name: "audio",
+        type: "audio/m4a",
+      });
+      data.append("user", "test"); 
+      data.append("domain", "audio_athar");
+  
+      console.log(data)
+
+      let res = await fetch("https://ajmanplugin-api.lfdanalytics.com/api/create_feedback/",
+      { method: "POST", headers:
+        { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
+        body: data,
+      })
+      console.log('res', await res.json())
   };
 
+  
   onStartPlay = async () => {
     console.log('onStartPlay');
     //? Custom path
