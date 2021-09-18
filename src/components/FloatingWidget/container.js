@@ -59,7 +59,8 @@ const FloatingWidgetContainer = () => {
 
 
   const postVideoFeedback = async(vidData) => {
-    data = new FormData(); 
+    console.log('vidData', vidData)
+    const data = new FormData(); 
     data.append("feedback_file", {
       uri: Platform.OS === 'ios' ? vidData.uri.replace('file://', '') : vidData.uri,
       name: vidData.fileName,
@@ -74,6 +75,7 @@ const FloatingWidgetContainer = () => {
         { Pragma: "no-cache", "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate", },
         body: data,
       })
+      console.log('res', res)
       // .then((res) => res.json())
       // .then((result) => {
       //   console.log('result', result)
