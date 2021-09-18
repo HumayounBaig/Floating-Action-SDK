@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FloatingWidget } from "./FloatingWidget"
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import { connectActionSheet } from '@expo/react-native-action-sheet'
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { floatingActions } from "./floatingActions";
-import { Text, View, Modal, Pressable,Alert } from "react-native";
-import { Player, Recorder, MediaStates } from '@react-native-community/audio-toolkit';
+import { Modal, Alert } from "react-native";
 import { AudioRecorder } from "./AudioRecorder";
 import { TextArea } from "./TextArea";
+import MovToMp4 from 'react-native-mov-to-mp4';
 
 const FloatingWidgetContainer = () => {
   const { showActionSheetWithOptions } = useActionSheet(); 
@@ -48,9 +47,23 @@ const FloatingWidgetContainer = () => {
       launchCamera({
         videoQuality:'high', 
         mediaType:'video', 
-        durationLimit:60
+        durationLimit:60,
       }, (res) => {
-        postVideoFeedback(res.assets[0])
+        console.log(res.assets[0])
+        const filename = Date.now().toString();
+        MovToMp4.convertMovToMp4(res.assets[0].uri, filename)
+        .then(function (results) {
+          const videoData = {
+            uri: results,
+            duration: res.assets[0].duration
+          }
+          console.log(videoData)
+          //here you can upload the video...
+          console.log(results);
+          postVideoFeedback(videoData)
+        });
+
+        // postVideoFeedback(res.assets[0])
       })
     } catch (error) {
       console.log(error)            
@@ -59,7 +72,6 @@ const FloatingWidgetContainer = () => {
 
 
   const postVideoFeedback = async(vidData) => {
-    console.log('vidData', vidData)
     const data = new FormData(); 
     data.append("feedback_file", {
       uri: Platform.OS === 'ios' ? vidData.uri.replace('file://', '') : vidData.uri,
@@ -76,20 +88,6 @@ const FloatingWidgetContainer = () => {
         body: data,
       })
       console.log('res', res)
-      // .then((res) => res.json())
-      // .then((result) => {
-      //   console.log('result', result)
-      //   const { data } = result;
-      //   if (Object.keys(data).length > 0) {
-      //     feedbackResContainer.style.display = "block";
-      //     txtFeedbackContainer.style.display = "none";
-      //     audioOptionContainer.style.display = "none";
-      //     videoOptionContainer.style.display = "none";
-      //     if (submitType === "textfile") {
-      //       textArea.value = "";
-      //     }
-      //   }
-      // })
     } catch (error) {
       console.log('err', error)
     }
