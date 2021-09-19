@@ -3,7 +3,7 @@ import { FloatingWidget } from "./FloatingWidget"
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { floatingActions } from "./floatingActions";
-import { Modal, Alert } from "react-native";
+import { Modal, Alert, Platform } from "react-native";
 import { AudioRecorder } from "./AudioRecorder";
 import { TextArea } from "./TextArea";
 import MovToMp4 from 'react-native-mov-to-mp4';
@@ -49,7 +49,7 @@ const FloatingWidgetContainer = () => {
         mediaType:'video', 
         durationLimit:60,
       }, (res) => {
-        console.log(res.assets[0])
+        if(Platform.OS == 'ios') {
         const filename = Date.now().toString();
         MovToMp4.convertMovToMp4(res.assets[0].uri, filename)
         .then(function (results) {
@@ -61,9 +61,21 @@ const FloatingWidgetContainer = () => {
           //here you can upload the video...
           console.log(results);
           postVideoFeedback(videoData)
-        });
+        }); 
+      }
+        else { 
+          console.log(res.assets[0],"dataa")
+          const videoDataAndroid = {
+            uri: res.assets[0].uri,
+            duration: res.assets[0].duration,
+            fileName: res.assets[0].fileName,
+            fileSize:res.assets[0].fileSize
+          }
+            postVideoFeedback(videoDataAndroid)
+          
+        }
 
-        // postVideoFeedback(res.assets[0])
+        //
       })
     } catch (error) {
       console.log(error)            
@@ -76,7 +88,8 @@ const FloatingWidgetContainer = () => {
     data.append("feedback_file", {
       uri: Platform.OS === 'ios' ? vidData.uri.replace('file://', '') : vidData.uri,
       name: vidData.fileName,
-      type: vidData.fileSize,
+      type: "video/mp4",
+      
     });
     data.append("user", "admin"); 
     data.append("domain", "video_athar");
@@ -98,7 +111,7 @@ const FloatingWidgetContainer = () => {
     try {
       const data = new FormData(); 
       data.append("feedback_file", {
-        uri: Platform.OS === 'ios' ? data.uri.replace('file://', '') : data.uri,
+        uri: Platform.OS === 'ios' ? cameraResponse.uri.replace('file://', '') : cameraResponse.uri,
         name: cameraResponse.fileName,
         type: cameraResponse.type,
       });
