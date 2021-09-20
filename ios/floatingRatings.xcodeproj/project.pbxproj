@@ -492,7 +492,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = F63RP3BJQJ;
+				DEVELOPMENT_TEAM = 5N8LTBB23C;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = floatingRatings/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -504,7 +504,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.floatingRatings.com;
 				PRODUCT_NAME = floatingRatings;
 				SWIFT_OBJC_BRIDGING_HEADER = "floatingRatings-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -520,7 +520,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = F63RP3BJQJ;
+				DEVELOPMENT_TEAM = 5N8LTBB23C;
 				INFOPLIST_FILE = floatingRatings/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -531,7 +531,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.floatingRatings.com;
 				PRODUCT_NAME = floatingRatings;
 				SWIFT_OBJC_BRIDGING_HEADER = "floatingRatings-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

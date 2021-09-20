@@ -86,7 +86,7 @@ const FloatingWidgetContainer = () => {
   const postVideoFeedback = async(vidData) => {
     const data = new FormData(); 
     data.append("feedback_file", {
-      uri: Platform.OS === 'ios' ? vidData.uri.replace('file://', '') : vidData.uri,
+      uri: Platform.OS === 'ios' ? `file://${vidData.uri}` : vidData.uri,
       name: vidData.fileName,
       type: "video/mp4",
       
