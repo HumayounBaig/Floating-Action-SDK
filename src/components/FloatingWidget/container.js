@@ -55,6 +55,7 @@ const FloatingWidgetContainer = () => {
         .then(function (results) {
           const videoData = {
             uri: results,
+            fileName:filename+".mp4",
             duration: res.assets[0].duration
           }
           console.log(videoData)
