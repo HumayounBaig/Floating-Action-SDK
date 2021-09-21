@@ -107,7 +107,7 @@ export class AudioRecorder extends Component {
   dirs = RNFetchBlob.fs.dirs;
   path = Platform.select({
     ios: 'hello.m4a',
-    android: `${this.dirs.CacheDir}/hello.mp3`,
+    android: `${this.dirs.CacheDir}/hello.m4a`,
   });
 
   audioRecorderPlayer
@@ -388,7 +388,7 @@ export class AudioRecorder extends Component {
     const data = new FormData(); 
       data.append("feedback_file", {
         uri: `${result}`,
-        name: "audio",
+        name: "audio" + new Date() + ".m4a",
         type: "audio/m4a",
       });
       data.append("user", "test"); 

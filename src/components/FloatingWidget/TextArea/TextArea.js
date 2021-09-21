@@ -27,8 +27,8 @@ export const TextArea = (params) => {
         const data = new FormData(); 
         data.append("feedback_file", {
           uri: `file://${path}`,
-          name: "image",
-          type: "image/png",
+          name: "test.txt",
+          type: "file/.txt",
         });
         data.append("user", "admin"); 
         data.append("domain", "text_athar");
